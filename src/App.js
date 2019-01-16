@@ -1,28 +1,42 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Route, Link, Switch } from 'react-router-dom';
+import Movies from './components/movies';
+import MovieInfos from './components/movieInfos';
+
 
 class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
-    );
-  }
-}
 
+    constructor(props) {
+        super(props);
+        this.state = {
+            movies: [],
+            isLoaded: false
+        }
+    }
+
+
+    componentDidMount() {
+        fetch('https://api.tvmaze.com/search/shows?q=robin%20hood')
+            .then(res => res.json())
+            .then(json => {
+                this.setState({
+                    isLoaded: true,
+                    movies: json
+                })
+            });
+    }
+    
+    render() {
+        var { isLoaded, movies } = this.state;
+        if (!isLoaded) {
+            return <div>Loading...</div>;
+        }
+        return (
+            <Switch>
+                  <Route exact path="/" component={Movies} />
+                  <Route  path="/movieinfos/:id" component={MovieInfos} />
+            </Switch>            
+        );
+    }
+}
 export default App;
